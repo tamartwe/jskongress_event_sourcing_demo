@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const eventController = require('./controllers/event');
 const userController = require('./controllers/user');
-const eventLogController = require('./controllers/event_log');
 const userFollowsController = require('./controllers/userFollows');
+const newsfeedController = require('./controllers/newsfeed');
 
 const cors = require('cors');
 
@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 userFollowsController.run();
+newsfeedController.run();
 
 
 // Create our Express router
@@ -57,14 +58,13 @@ router.route('/userFollows')
 router.route('/userFollows/:user_id')
   .get(userFollowsController.getSingleUserFollows)
 
+// Create endpoint handlers for /newsfeed
+router.route('/newsfeed')
+  .get(newsfeedController.getNewsfeeds);
 
-// Create endpoint handlers for /followers
-router.route('/followers')
-  .get(eventLogController.getFollowers);
-
-// Create endpoint handlers for /newsFeed
-router.route('/newsFeed')
-  .get(eventLogController.getNewsfeed);
+// Create endpoint handlers for /newsfeed/:user_id
+router.route('/newsfeed/:user_id')
+  .get(newsfeedController.getSingleUserNewsfeed)
 
 
 // Register all our routes with /api

@@ -34,7 +34,6 @@ const buildUserFollows = async () => {
   try {
     followsEvents = await Event.find({'action' : 'FollowUser'}); 
   } catch (ex) {
-    console.log('failed fetching events' + ex);
     return;
   }
   if(followsEvents.length === 0) {
