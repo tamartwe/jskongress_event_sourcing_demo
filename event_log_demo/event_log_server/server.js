@@ -6,6 +6,7 @@ const eventController = require('./controllers/event');
 const userController = require('./controllers/user');
 const userFollowsController = require('./controllers/userFollows');
 const newsfeedController = require('./controllers/newsfeed');
+const likeController = require('./controllers/like');
 
 const cors = require('cors');
 
@@ -65,6 +66,13 @@ router.route('/newsfeed')
 // Create endpoint handlers for /newsfeed/:user_id
 router.route('/newsfeed/:user_id')
   .get(newsfeedController.getSingleUserNewsfeed)
+
+// Create endpoint handlers for /newsfeed/:user_id
+router.route('/twitt/:user_id')
+  .get(newsfeedController.getTwitt)
+
+router.route('/like/:twitt_id')
+  .get(likeController.getLike)
 
 
 // Register all our routes with /api

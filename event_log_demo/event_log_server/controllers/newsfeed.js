@@ -29,6 +29,23 @@ exports.getSingleUserNewsfeed = async (req, res) => {
   return res.json(newsfeed[0].twitts);
 };
 
+exports.getTwitt = async (req, res) => {
+  let newsfeed;
+  try {
+    const mainUserId= req.params.user_id;
+    newsfeed = await Newsfeed.find({'userId' : mainUserId });      
+  } catch (ex) {
+    return res.send(ex);
+  }
+  if (newsfeed.length === 0) {
+    return res.json({});
+  }
+  const twitts = newsfeed[0].twitts;
+  const text = req.query.text;
+  const twitt = twitts.filter((twitt) => twitt.text === text);
+  return res.json(twitt);
+}
+
 const getFollows = async (userId) => {
   let userFollows;
   try {
@@ -47,12 +64,15 @@ const buildTwitts = (newsfeedEvents, userFollows) => {
   const twitts = newsfeedEvents.map((event) => {
     const text = event.text;
     const userTwittedId = event.userId;
-    const user = userFollows.userFollows.filter((user) => {
-      user._id === userTwittedId
+    const twittId = event._id.toString();
+    const user = userFollows.userFollows.filter((follows) => {
+      return follows._id.toString() === userTwittedId
     });
     const twittObj = {};
+    twittObj._id = twittId;
     twittObj.text = text;
-    twittObj.user = user;
+    twittObj.user = user[0];
+    return twittObj;
   });
   return twitts;
 }
@@ -72,6 +92,7 @@ const getOrCreateNewsfeedInstance = async (mainUserId) => {
   } else {
     newsfeedInstance = newsfeed[0];
   }
+  return newsfeedInstance;
 }
 
 const buildNewsfeed = async () => {
@@ -91,7 +112,7 @@ const buildNewsfeed = async () => {
   if(newsfeedEvents.length === 0) {
     return;
   }
-  let newsfeedInstance = await getOrCreateNewsfeedInstance();
+  let newsfeedInstance = await getOrCreateNewsfeedInstance(mainUserId);
   const twitts = buildTwitts(newsfeedEvents, userFollows);  
   newsfeedInstance.twitts = twitts;
   await newsfeedInstance.save();

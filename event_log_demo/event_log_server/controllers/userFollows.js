@@ -29,22 +29,21 @@ exports.getSingleUserFollows = async (req, res) => {
   return res.json(userFollows[0].userFollows);
 };
 
-const buildUserFollows = async () => {
+const getFollowsEvents = async () => {
   let followsEvents;
   try {
     followsEvents = await Event.find({'action' : 'FollowUser'}); 
   } catch (ex) {
-    return;
+    console.log('exception while trying to fetch events' + ex);
+    return null;
   }
   if(followsEvents.length === 0) {
-    return;
+    return null;
   }
-  const users = await Promise.all(followsEvents.map(async (event) =>  { 
-    console.log('user id ' + event.followsUser);
-    return User.findById(event.followsUser)
-  }
-  ));
-  const mainUserId = followsEvents[0].userId;
+  return followsEvents;
+}
+
+const getOrCreateUserFollowsInstance = async (mainUserId) => {
   let userFollows;
   try {
     userFollows = await UserFollows.find({'userId' : mainUserId });    
@@ -59,6 +58,21 @@ const buildUserFollows = async () => {
   } else {
     userFollowsInstance = userFollows[0];
   }
+  return userFollowsInstance;
+}
+
+const buildUserFollows = async () => {
+  let followsEvents = await getFollowsEvents();
+  if (followsEvents === null) {
+    return;
+  }
+  const users = await Promise.all(followsEvents.map(async (event) =>  { 
+    console.log('user id ' + event.followsUser);
+    return User.findById(event.followsUser)
+  }
+  ));
+  const mainUserId = followsEvents[0].userId;
+  let userFollowsInstance = await getOrCreateUserFollowsInstance(mainUserId);
   userFollowsInstance.userFollows = users;
   await userFollowsInstance.save();
 }
