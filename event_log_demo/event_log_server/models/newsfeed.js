@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 // Define our event schema
 var newsfeedSchema   = new mongoose.Schema({
   userId: String,
-  twitts: Array
+  tweets: Array
 });
 
 // Export the Mongoose model

@@ -19,7 +19,7 @@ exports.postEvents = async (req, res) => {
   } catch (ex) {
     return res.send(ex); 
   }
-  return res.json({ message: 'Event added to the locker!', data: event });
+  return res.json({ data: event });
 };
 
 // Create endpoint /api/events for GET

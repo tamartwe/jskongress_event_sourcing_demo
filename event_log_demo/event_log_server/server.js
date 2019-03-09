@@ -10,7 +10,7 @@ const likeController = require('./controllers/like');
 
 const cors = require('cors');
 
-// Connect to the eventlocker MongoDB
+// Connect to the MongoDB
 mongoose.connect('mongodb://localhost:27017/events', {useNewUrlParser: true});
 
 // Create our Express application
@@ -68,10 +68,10 @@ router.route('/newsfeed/:user_id')
   .get(newsfeedController.getSingleUserNewsfeed)
 
 // Create endpoint handlers for /newsfeed/:user_id
-router.route('/twitt/:user_id')
-  .get(newsfeedController.getTwitt)
+router.route('/tweet/:user_id')
+  .get(newsfeedController.gettweet)
 
-router.route('/like/:twitt_id')
+router.route('/like/:tweet_id')
   .get(likeController.getLike)
 
 

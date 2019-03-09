@@ -1,12 +1,12 @@
 const Event = require('../models/event');
 
 
-// Create endpoint /like/:twitt_id for GET
+// Create endpoint /like/:tweet_id for GET
 exports.getLike = async (req, res) => {
   // Use the Event model to find all relevant likes
   let events;
   try {
-    events = await Event.find({ 'action': 'LikeTwitt', 'tweetId' : req.params.twitt_id});    
+    events = await Event.find({ 'action': 'Liketweet', 'tweetId' : req.params.tweet_id});    
   } catch (ex) {
     return res.send(ex);
   }

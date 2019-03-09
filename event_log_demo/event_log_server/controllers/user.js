@@ -17,7 +17,7 @@ exports.postUsers = async (req, res) => {
   } catch (ex) {
     return res.send(ex); 
   }
-  return res.json({ message: 'User added to the locker!', data: user });
+  return res.json({ data: user });
 };
 
 // Create endpoint /users for GET

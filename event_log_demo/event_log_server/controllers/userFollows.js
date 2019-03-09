@@ -66,7 +66,7 @@ const buildUserFollows = async () => {
   if (followsEvents === null) {
     return;
   }
-  const users = await Promise.all(followsEvents.map(async (event) =>  { 
+  const users = await Promise.all(followsEvents.map((event) =>  { 
     console.log('user id ' + event.followsUser);
     return User.findById(event.followsUser)
   }

@@ -26,10 +26,10 @@ exports.getSingleUserNewsfeed = async (req, res) => {
   if (newsfeed.length === 0) {
     return res.json({});
   }
-  return res.json(newsfeed[0].twitts);
+  return res.json(newsfeed[0].tweets);
 };
 
-exports.getTwitt = async (req, res) => {
+exports.gettweet = async (req, res) => {
   let newsfeed;
   try {
     const mainUserId= req.params.user_id;
@@ -40,10 +40,10 @@ exports.getTwitt = async (req, res) => {
   if (newsfeed.length === 0) {
     return res.json({});
   }
-  const twitts = newsfeed[0].twitts;
+  const tweets = newsfeed[0].tweets;
   const text = req.query.text;
-  const twitt = twitts.filter((twitt) => twitt.text === text);
-  return res.json(twitt);
+  const tweet = tweets.filter((tweet) => tweet.text === text);
+  return res.json(tweet);
 }
 
 const getFollows = async (userId) => {
@@ -60,21 +60,21 @@ const getFollows = async (userId) => {
   return userFollows[0];
 }
 
-const buildTwitts = (newsfeedEvents, userFollows) => {
-  const twitts = newsfeedEvents.map((event) => {
+const buildtweets = (newsfeedEvents, userFollows) => {
+  const tweets = newsfeedEvents.map((event) => {
     const text = event.text;
-    const userTwittedId = event.userId;
-    const twittId = event._id.toString();
+    const usertweetedId = event.userId;
+    const tweetId = event._id.toString();
     const user = userFollows.userFollows.filter((follows) => {
-      return follows._id.toString() === userTwittedId
+      return follows._id.toString() === usertweetedId
     });
-    const twittObj = {};
-    twittObj._id = twittId;
-    twittObj.text = text;
-    twittObj.user = user[0];
-    return twittObj;
+    const tweetObj = {};
+    tweetObj._id = tweetId;
+    tweetObj.text = text;
+    tweetObj.user = user[0];
+    return tweetObj;
   });
-  return twitts;
+  return tweets;
 }
 
 const getOrCreateNewsfeedInstance = async (mainUserId) => {
@@ -104,7 +104,7 @@ const buildNewsfeed = async () => {
   const userFollowsIds = userFollows.userFollows.map(user => user._id);
   let newsfeedEvents;
   try {
-    newsfeedEvents = await Event.find({'action' : 'postTwitt', 'userId' : { '$in' : userFollowsIds}}); 
+    newsfeedEvents = await Event.find({'action' : 'postTweet', 'userId' : { '$in' : userFollowsIds}}); 
   } catch (ex) {
     console.log('failed fetching events' + ex);
     return;
@@ -113,8 +113,8 @@ const buildNewsfeed = async () => {
     return;
   }
   let newsfeedInstance = await getOrCreateNewsfeedInstance(mainUserId);
-  const twitts = buildTwitts(newsfeedEvents, userFollows);  
-  newsfeedInstance.twitts = twitts;
+  const tweets = buildtweets(newsfeedEvents, userFollows);  
+  newsfeedInstance.tweets = tweets;
   await newsfeedInstance.save();
 }
 
@@ -124,6 +124,8 @@ const buildNewwfeedTimer = async () => {
 }
 
 exports.run = buildNewwfeedTimer;
+
+
 
 
 
