@@ -6,7 +6,7 @@ exports.getLike = async (req, res) => {
   // Use the Event model to find all relevant likes
   let events;
   try {
-    events = await Event.find({ 'action': 'Liketweet', 'tweetId' : req.params.tweet_id});    
+    events = await Event.find({ 'action': 'liketweet', 'tweetId' : req.params.tweet_id});    
   } catch (ex) {
     return res.send(ex);
   }
